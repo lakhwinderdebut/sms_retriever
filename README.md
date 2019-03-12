@@ -16,3 +16,10 @@ Stop listening after getting the SMS
 ```dart
 SmsRetriever.stopListening();
 ```
+
+
+Example SMS
+
+[#] Your example code is:
+123456
+appSignature
