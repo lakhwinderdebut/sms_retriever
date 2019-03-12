@@ -8,7 +8,7 @@ To retrieve a app signature. It requires by the SMS
 ```dart
 String appSignature = await SmsRetriever.getAppSignature();
 ```
-To stat listening for and incoming SMS
+To start listening for an incoming SMS
 ```dart
 String smsCode = await SmsRetriever.startListening();
 ```
