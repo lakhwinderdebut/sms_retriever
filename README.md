@@ -18,7 +18,10 @@ SmsRetriever.stopListening();
 ```
 
 Generate appSignature for keystore file
+````dart in html
 keytool -storepass storepass -alias alias -exportcert -keystore file | xxd -p | tr -d "[:space:]" | xxd -r -p | base64 | cut -c1-11
+
+````
 
 Example SMS
 
