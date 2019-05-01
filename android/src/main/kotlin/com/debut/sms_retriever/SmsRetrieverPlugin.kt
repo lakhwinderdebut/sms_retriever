@@ -10,6 +10,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.Status;
 
 class SmsRetrieverPlugin(private val context: Activity) : MethodCallHandler {
 
