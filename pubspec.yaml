@@ -1,11 +1,11 @@
 name: sms_retriever
 description: A new Flutter plugin to retrieve the SMS on Android using SMS Retrieval API
-version: 0.0.2
+version: 1.0.0
 author: Lakhwinder Singh <lakhwinder.singh@debutinfotech.com>
 homepage: https://github.com/debutdeveloper/sms_retriever
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
