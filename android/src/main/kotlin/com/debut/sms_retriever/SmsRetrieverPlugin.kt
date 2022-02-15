@@ -1,11 +1,12 @@
 package com.debut.sms_retriever
 
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -14,29 +15,33 @@ import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
-class SmsRetrieverPlugin(private val context: Activity) : MethodCallHandler {
+class SmsRetrieverPlugin() : MethodCallHandler, FlutterPlugin {
 
     private var receiver: MySMSBroadcastReceiver? = null
     var sms: String? = null
     var result: MethodChannel.Result? = null
+    private lateinit var channel: MethodChannel
+    private lateinit var context: Context
 
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "sms_retriever")
-            channel.setMethodCallHandler(SmsRetrieverPlugin(registrar.activity()))
-        }
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding){
+        context = binding.applicationContext
+        channel = MethodChannel(binding.getBinaryMessenger(), "sms_retriever")
+        channel.setMethodCallHandler(this)
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        channel?.setMethodCallHandler(null)
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when {
             call.method == "getAppSignature" -> {
-                val signature = AppSignatureHelper(this.context).getAppSignatures()[0]
+                val signature = AppSignatureHelper(context).getAppSignatures()[0]
                 result.success(signature);
             }
             call.method == "startListening" -> {
                 receiver = MySMSBroadcastReceiver()
-                this.context.registerReceiver(receiver, IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION))
+                context.registerReceiver(receiver, IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION))
                 startListening()
                 this.result = result;
             }
@@ -49,7 +54,7 @@ class SmsRetrieverPlugin(private val context: Activity) : MethodCallHandler {
     private fun startListening() {
         // Get an instance of SmsRetrieverClient, used to start listening for a matching
         // SMS message.
-        val client = SmsRetriever.getClient(this.context /* context */)
+        val client = SmsRetriever.getClient(context)
 
         // Starts SmsRetriever, which waits for ONE matching SMS message until timeout
         // (5 minutes). The matching SMS message will be sent via a Broadcast Intent with
@@ -61,7 +66,6 @@ class SmsRetrieverPlugin(private val context: Activity) : MethodCallHandler {
         task.addOnSuccessListener {
             // Successfully started retriever, expect broadcast intent
             Log.e(javaClass::getSimpleName.name, "task started")
-
         }
 
         task.addOnFailureListener {
@@ -69,12 +73,10 @@ class SmsRetrieverPlugin(private val context: Activity) : MethodCallHandler {
             Log.e(javaClass::getSimpleName.name, "task starting failed")
             // ...
         }
-
-
     }
 
     private fun unregister() {
-        this.context.unregisterReceiver(receiver);
+        context.unregisterReceiver(receiver);
     };
 
 
